@@ -1,0 +1,32 @@
+services:
+  influxdb:
+    image: influxdb:2
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+      DOCKER_INFLUXDB_INIT_ORG: meshtastic
+      DOCKER_INFLUXDB_INIT_BUCKET: meshtastic
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: meshtastic-dev-token
+
+  meshtastic-mqtt-influx:
+    build: .
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+    environment:
+      MQTT_BROKER_URL: mqtt://mqtt.meshtastic.org:1883
+      MQTT_TOPIC: "msh/+/+/+"
+      MESH_ENCRYPTION_KEY: "AQ=="
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_TOKEN: meshtastic-dev-token
+      INFLUXDB_ORG: meshtastic
+      INFLUXDB_BUCKET: meshtastic
+      LOG_LEVEL: info
+
+volumes:
+  influxdb-data:
