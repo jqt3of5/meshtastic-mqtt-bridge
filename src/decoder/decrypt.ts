@@ -20,7 +20,7 @@ const aesKey = expandKey(channelKey);
 export function buildNonce(packetId: number, fromNode: number): Buffer {
   const nonce = Buffer.alloc(16, 0);
   nonce.writeUInt32LE(packetId >>> 0, 0);
-  nonce.writeUInt32LE(fromNode >>> 0, 4);
+  nonce.writeUInt32LE(fromNode >>> 0, 8);
   return nonce;
 }
 
@@ -31,7 +31,8 @@ export function decryptPayload(
 ): { portnum: number; payload: Uint8Array } | null {
   try {
     const nonce = buildNonce(packetId, fromNode);
-    const decipher = crypto.createDecipheriv("aes-128-ctr", aesKey, nonce);
+    const algorithm = aesKey.length === 32 ? "aes-256-ctr" : "aes-128-ctr";
+    const decipher = crypto.createDecipheriv(algorithm, aesKey, nonce);
     const decrypted = Buffer.concat([
       decipher.update(Buffer.from(encrypted)),
       decipher.final(),
