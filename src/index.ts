@@ -6,6 +6,8 @@ import { decryptPayload } from "./decoder/decrypt";
 import { decodePayload } from "./decoder/payload";
 import { writePacket } from "./influx/writer";
 import { closeWriteApi } from "./influx/client";
+import { publishPacket } from "./kafka/writer";
+import { connectProducer, disconnectProducer, isKafkaEnabled } from "./kafka/client";
 import { PacketMetadata } from "./types";
 
 function nodeIdToHex(id: number): string {
@@ -63,11 +65,18 @@ function handleMessage(msg: MqttMessage): void {
       "Writing decoded packet"
     );
     writePacket(pkt);
+    if (isKafkaEnabled()) {
+      publishPacket(pkt);
+    }
   }
 }
 
 async function main(): Promise<void> {
-  logger.info("Starting Meshtastic MQTT → InfluxDB service");
+  const outputs = ["InfluxDB"];
+  if (isKafkaEnabled()) outputs.push("Kafka");
+  logger.info({ outputs }, "Starting Meshtastic MQTT bridge");
+
+  await connectProducer();
 
   const mqtt = new MeshtasticMqttClient();
   mqtt.on("message", (msg: MqttMessage) => {
@@ -84,6 +93,7 @@ async function main(): Promise<void> {
     logger.info("Shutting down...");
     mqtt.disconnect();
     await closeWriteApi();
+    await disconnectProducer();
     process.exit(0);
   };
 

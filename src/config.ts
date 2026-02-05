@@ -14,6 +14,29 @@ function optional(name: string, defaultValue: string): string {
   return process.env[name] || defaultValue;
 }
 
+function buildKafkaConfig() {
+  const brokers = process.env.KAFKA_BROKERS;
+  if (!brokers) return null;
+
+  const mechanism = process.env.KAFKA_SASL_MECHANISM as "plain" | "scram-sha-256" | "scram-sha-512" | undefined;
+  const sasl = mechanism && process.env.KAFKA_SASL_USERNAME && process.env.KAFKA_SASL_PASSWORD
+    ? {
+        mechanism,
+        username: process.env.KAFKA_SASL_USERNAME,
+        password: process.env.KAFKA_SASL_PASSWORD,
+      }
+    : null;
+
+  return {
+    brokers: brokers.split(",").map((b) => b.trim()),
+    topic: optional("KAFKA_TOPIC", "meshtastic.packets"),
+    clientId: optional("KAFKA_CLIENT_ID", "meshtastic-mqtt-bridge"),
+    compression: optional("KAFKA_COMPRESSION", "gzip"),
+    ssl: process.env.KAFKA_SSL === "true",
+    sasl,
+  };
+}
+
 export const config = {
   mqtt: {
     brokerUrl: optional("MQTT_BROKER_URL", "mqtt://mqtt.meshtastic.org:1883"),
@@ -30,4 +53,5 @@ export const config = {
     org: optional("INFLUXDB_ORG", "meshtastic"),
     bucket: optional("INFLUXDB_BUCKET", "meshtastic"),
   },
-} as const;
+  kafka: buildKafkaConfig(),
+};
