@@ -26,6 +26,7 @@ export function writePacket(packet: DecodedPacket): void {
           .intField("altitude", packet.altitude)
           .intField("sats_in_view", packet.satsInView)
           .intField("precision_bits", packet.precisionBits)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -54,6 +55,7 @@ export function writePacket(packet: DecodedPacket): void {
           point.floatField("barometric_pressure", packet.barometricPressure);
         if (packet.uptimeSeconds !== null)
           point.intField("uptime_seconds", packet.uptimeSeconds);
+        point.uintField("packet_id", packet.meta.packetId);
 
         api.writePoint(point);
         break;
@@ -67,6 +69,7 @@ export function writePacket(packet: DecodedPacket): void {
           .tag("to_node", packet.meta.toNode)
           .stringField("text", packet.text)
           .uintField("reply_id", packet.replyId)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -80,6 +83,7 @@ export function writePacket(packet: DecodedPacket): void {
           .stringField("short_name", packet.shortName)
           .stringField("hw_model", packet.hwModel)
           .stringField("mac_addr", packet.macAddr)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -91,6 +95,7 @@ export function writePacket(packet: DecodedPacket): void {
           .tag("gateway_id", packet.meta.gatewayId)
           .intField("neighbor_count", packet.neighborCount)
           .stringField("neighbors", JSON.stringify(packet.neighbors))
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -102,6 +107,7 @@ export function writePacket(packet: DecodedPacket): void {
           .tag("gateway_id", packet.meta.gatewayId)
           .stringField("route", JSON.stringify(packet.route))
           .intField("route_length", packet.route.length)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -118,6 +124,7 @@ export function writePacket(packet: DecodedPacket): void {
           .floatField("longitude", packet.longitude)
           .intField("altitude", packet.altitude)
           .stringField("firmware_version", packet.firmwareVersion)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -133,6 +140,7 @@ export function writePacket(packet: DecodedPacket): void {
           .floatField("longitude", packet.longitude)
           .intField("expire", packet.expire)
           .intField("icon", packet.icon)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
@@ -148,6 +156,7 @@ export function writePacket(packet: DecodedPacket): void {
           .intField("hop_start", packet.meta.hopStart)
           .intField("hop_limit", packet.meta.hopLimit)
           .booleanField("want_ack", packet.meta.wantAck)
+          .uintField("packet_id", packet.meta.packetId)
           .timestamp(ts);
         api.writePoint(point);
         break;
