@@ -41,6 +41,7 @@ export interface TextMessageData {
   type: "text_message";
   meta: PacketMetadata;
   text: string;
+  replyId: number;
 }
 
 export interface NodeInfoData {

@@ -57,7 +57,8 @@ function handleMessage(msg: MqttMessage): void {
     timestamp: new Date(),
   };
 
-  const decoded = decodePayload(portnum, payload, meta);
+  const replyId = packet.decoded?.replyId;
+  const decoded = decodePayload(portnum, payload, meta, replyId);
 
   for (const pkt of decoded) {
     logger.debug(

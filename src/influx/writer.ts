@@ -66,6 +66,7 @@ export function writePacket(packet: DecodedPacket): void {
           .tag("channel", packet.meta.channel)
           .tag("to_node", packet.meta.toNode)
           .stringField("text", packet.text)
+          .uintField("reply_id", packet.replyId)
           .timestamp(ts);
         api.writePoint(point);
         break;

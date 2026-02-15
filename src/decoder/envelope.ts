@@ -20,6 +20,7 @@ export interface ParsedEnvelope {
       dest: number;
       source: number;
       requestId: number;
+      replyId: number;
     };
     encrypted?: Uint8Array;
   };
@@ -60,6 +61,7 @@ export function parseServiceEnvelope(
               dest: packet.decoded.dest >>> 0,
               source: packet.decoded.source >>> 0,
               requestId: packet.decoded.requestId >>> 0,
+              replyId: packet.decoded.replyId >>> 0,
             }
           : undefined,
         encrypted: packet.encrypted || undefined,

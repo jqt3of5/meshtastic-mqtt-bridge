@@ -58,7 +58,8 @@ function nodeIdToHex(id: number): string {
 export function decodePayload(
   portnum: number,
   payload: Uint8Array,
-  meta: PacketMetadata
+  meta: PacketMetadata,
+  replyId?: number
 ): DecodedPacket[] {
   const results: DecodedPacket[] = [];
 
@@ -70,6 +71,7 @@ export function decodePayload(
           type: "text_message",
           meta,
           text,
+          replyId: replyId || 0,
         });
         break;
       }
